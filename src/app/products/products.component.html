@@ -1,7 +1,88 @@
-<ul>
-  <li *ngFor='let product of products$'>
-    {{ product.sku }}
-    {{ product.description }}
-    {{ product.price }}
-  </li>
-</ul>
+<h2>Products</h2>
+
+<button 
+  class='top-button'
+  mat-raised-button (click)='showForm = true; crudForm.reset()'>
+  Add New Product
+</button>
+
+<div *ngIf='showForm; else allProducts'>
+  <button 
+    class='top-button'
+    mat-raised-button (click)=
+    'showForm = !showForm; 
+    crudForm.reset()'
+  >Cancel</button>
+
+  <form 
+    class='form'
+    id='productForm'
+    [formGroup]="crudForm" 
+    (ngSubmit)='addOrEdit()' 
+    novalidate>
+
+    <mat-form-field>
+      <mat-label>Product SKU</mat-label>
+      <input matInput formControlName='sku'>
+      <mat-error *ngIf='(sku.dirty || sku.touched) && sku.invalid && sku.errors.required'>
+        SKU is required
+      </mat-error>
+      <mat-error *ngIf='(sku.dirty || sku.touched) && sku.invalid && sku.errors.minlength'>
+        SKU must be between 6 - 8 numbers
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Product Description</mat-label>
+      <textarea matInput formControlName='description'></textarea>
+      <mat-error *ngIf='(description.dirty || description.touched) && description.invalid && description.errors.required'>
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Product Price</mat-label>
+      <input matInput formControlName='price'>
+      <span matPrefix>$</span>
+      <mat-error *ngIf='(price.dirty || price.touched) && price.invalid && price.errors.required'>
+        Price is required
+      </mat-error>
+      <mat-error *ngIf='(price.dirty || price.touched) && price.invalid && price.errors.invalidNumber'>
+        Price must start at 0.01. Acceptable: 12, 12.3, 12.34
+      </mat-error>
+    </mat-form-field>
+
+    <button 
+      mat-raised-button
+      type="submit" 
+      [disabled]="!crudForm.valid"
+    >Submit</button>
+  </form>
+</div>
+
+<ng-template #allProducts>
+  <mat-accordion class='product-accordion'>
+    <mat-expansion-panel *ngFor='let product of products$'>
+      <mat-expansion-panel-header>
+        SKU: {{ product.sku }}
+      </mat-expansion-panel-header>
+
+      <p>${{ product.price }}</p>
+      <p>{{ product.description }}</p>
+
+      <mat-action-row class='actions'>
+        <button
+          mat-fab (click)=
+          'putInForm(product);
+          showForm = true;'
+        >Edit</button>
+
+        <button 
+          mat-raised-button class='warn' 
+          (click)='deleteProduct(product.id)'
+        >Delete</button>
+
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</ng-template>

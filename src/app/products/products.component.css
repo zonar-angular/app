@@ -1,0 +1,35 @@
+h2 {
+  color: #4527A0;
+}
+
+.top-button {
+  margin: 10px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.warn {
+  background-color: red;
+  color: white;
+}
+
+.form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form > * {
+  padding: 20px;
+  width: 30%;
+}
+
+.product-accordion > * {
+  margin: 0 auto;
+  text-align: left;
+  width: 40%;
+}
