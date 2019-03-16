@@ -39,9 +39,7 @@ export class ProductsComponent implements OnInit {
   get price() { return this.crudForm.get('price') }
 
   addOrEdit() {
-    if (this.crudForm.value.id) {
-      this.editProduct(this.crudForm.value);
-    }
+    if (this.crudForm.value.id) this.editProduct(this.crudForm.value);
     else this.addProduct(this.crudForm.value);
   }
 
