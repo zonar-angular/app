@@ -17,7 +17,7 @@
   <form 
     class='form'
     id='productForm'
-    [formGroup]="crudForm" 
+    [formGroup]='crudForm'
     (ngSubmit)='addOrEdit()' 
     novalidate>
 
@@ -52,10 +52,11 @@
       </mat-error>
     </mat-form-field>
 
-    <button 
+    <button
+      id='submit'
       mat-raised-button
-      type="submit" 
-      [disabled]="!crudForm.valid"
+      type='submit'
+      [disabled]='!crudForm.valid'
     >Submit</button>
   </form>
 </div>
