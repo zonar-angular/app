@@ -22,7 +22,7 @@ Routes to either `/` or `/products`
 
 ## Models
 ### Product
-Supports SKU, description, and price. Optional ID creation purposes.
+Supports SKU, description, and price. Optional ID for creation purposes.
 
 ## Components
 ### App
