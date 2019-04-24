@@ -1,25 +1,14 @@
 <h2>Products</h2>
 
-<button 
-  class='top-button'
-  mat-raised-button (click)='showForm = true; crudForm.reset()'>
+<button class='top-button' mat-raised-button (click)='showForm = true; crudForm.reset()'>
   Add New Product
 </button>
 
 <div *ngIf='showForm; else allProducts'>
-  <button 
-    class='top-button'
-    mat-raised-button (click)=
-    'showForm = !showForm; 
-    crudForm.reset()'
-  >Cancel</button>
+  <button class='top-button' mat-raised-button (click)='showForm = !showForm; 
+    crudForm.reset()'>Cancel</button>
 
-  <form 
-    class='form'
-    id='productForm'
-    [formGroup]='crudForm'
-    (ngSubmit)='addOrEdit()' 
-    novalidate>
+  <form class='form' id='productForm' [formGroup]='crudForm' (ngSubmit)='addOrEdit()' novalidate>
 
     <mat-form-field>
       <mat-label>Product SKU</mat-label>
@@ -35,7 +24,8 @@
     <mat-form-field>
       <mat-label>Product Description</mat-label>
       <textarea matInput formControlName='description'></textarea>
-      <mat-error *ngIf='(description.dirty || description.touched) && description.invalid && description.errors.required'>
+      <mat-error
+        *ngIf='(description.dirty || description.touched) && description.invalid && description.errors.required'>
         Description is required
       </mat-error>
     </mat-form-field>
@@ -52,18 +42,61 @@
       </mat-error>
     </mat-form-field>
 
-    <button
-      id='submit'
-      mat-raised-button
-      type='submit'
-      [disabled]='!crudForm.valid'
-    >Submit</button>
+    <button id='submit' mat-raised-button type='submit' [disabled]='!crudForm.valid'>Submit</button>
   </form>
 </div>
 
 <ng-template #allProducts>
+  <mat-form-field>
+    <input matInput type='number' [formControl]='skuFilter' placeholder='SKU' />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type='number' [formControl]='priceFilter' placeholder='Price' />
+  </mat-form-field>
+
+  <table mat-table [dataSource]='dataSource' matSort>
+    <ng-container matColumnDef='sku'>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> SKU </th>
+      <td mat-cell *matCellDef='let element'>{{ element.sku }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef='price'>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Price </th>
+      <td mat-cell *matCellDef='let element'>{{ element.price }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef='description'>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+      <td mat-cell *matCellDef='let element'>{{ element.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef='edit'>
+      <th mat-header-cell *matHeaderCellDef> Edit </th>
+      <td mat-cell *matCellDef='let element'>
+        <button mat-fab (click)='putInForm(element);
+          showForm = true;'>Edit</button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef='delete'>
+      <th mat-header-cell *matHeaderCellDef> Delete </th>
+      <td mat-cell *matCellDef='let element'>
+        <button mat-raised-button class='warn' (click)='deleteProduct(element.id)'>Delete</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef='displayedColumns'></tr>
+    <tr mat-row *matRowDef='let row; columns: displayedColumns'></tr>
+  </table>
+
+  <mat-paginator [pageSize]='50' [pageSizeOptions]='[2, 50, 100]'></mat-paginator>
+
+  <!-- <input type='number' [(ngModel)]='skuSearch' />
+  <input type='number' [(ngModel)]='priceSearch' />
+  <input type='text' [(ngModel)]='descSearch' />
+
   <mat-accordion class='product-accordion'>
-    <mat-expansion-panel *ngFor='let product of products$'>
+    <mat-expansion-panel *ngFor='let product of products | async | filterlist: skuSearch:priceSearch:descSearch'>
       <mat-expansion-panel-header>
         SKU: {{ product.sku }}
       </mat-expansion-panel-header>
@@ -85,5 +118,5 @@
 
       </mat-action-row>
     </mat-expansion-panel>
-  </mat-accordion>
+  </mat-accordion> -->
 </ng-template>

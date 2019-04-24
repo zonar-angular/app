@@ -1,8 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProductsService } from './products.service';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatTableDataSource, MatTable, MatSort, MatPaginator } from '@angular/material';
 import { Product } from '../models/product.model';
 import { priceValidator } from '../validators/price.validator';
+import { Observable } from 'rxjs';
+
+import { Store, Select } from '@ngxs/store';
+import { ProductState } from '../store/states/products.state';
+import { AddProduct, GetProducts, DeleteProduct, EditProduct} from '../store/actions/product.actions';
+import { debounceTime } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-products',
@@ -10,20 +17,31 @@ import { priceValidator } from '../validators/price.validator';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
+  @Select(ProductState.getProductList) products: Observable<Product[]>;
 
-  /*
-  Initial State begins null
-  */
-  products$: Array<Product>;
+  //*****************
+  // TABLE */
+
+  displayedColumns = ['sku', 'price', 'description', 'edit', 'delete'];
+  dataSource = new MatTableDataSource<Product>();
+
+  skuFilter: FormControl = new FormControl();
+  priceFilter: FormControl = new FormControl();
+  filterValues: any = { sku: '', price: '' } 
+
+  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  // ***************
+
   crudForm: FormGroup;
   showForm: boolean = false;
-
-  constructor(
-    private productsService: ProductsService,
-  ) {
+  
+  constructor( private store: Store ) {
     this.crudForm = this.createFormGroup();
   }
-  
+
   /*
   ngOnInit()
 
@@ -35,17 +53,40 @@ export class ProductsComponent implements OnInit {
   Parameters: Nothing
   */
   ngOnInit() {
-    this.productsService
-      .getProducts()
-      .subscribe( data => {
-        let dataArr = [];
-        for (let obj in data) {
-          dataArr.push(data[obj]);
-        }
-
-        this.products$ = dataArr;
-      });
+    this.store.dispatch( new GetProducts() );
   }
+
+  //******** TABLE ********/
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.products.subscribe( prod => this.dataSource.data = prod as Product[] );
+
+    this.skuFilter.valueChanges.subscribe( val => {
+      this.filterValues['sku'] = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+    this.priceFilter.valueChanges.subscribe( val => {
+      this.filterValues['price'] = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+
+    this.dataSource.filterPredicate = this.createFilter();
+  }
+
+  createFilter() {
+    let filterFunction = function(data, filter) : boolean {
+      let searchTerms = JSON.parse(filter);
+      if (!searchTerms.sku) searchTerms.sku = '';
+      if (!searchTerms.price) searchTerms.price = '';
+
+      return data.sku.toString().indexOf(searchTerms.sku) !== -1 && data.price.toString().indexOf(searchTerms.price) !== -1;
+    }
+    return filterFunction;
+  }
+
+  // **********************
 
   /*
   gets
@@ -87,15 +128,11 @@ export class ProductsComponent implements OnInit {
   */
   addProduct(newProduct) {
     const result: Product = Object.assign({}, newProduct);
-
-    this.productsService
-      .addProduct(result)
-      .subscribe(data => {
-        this.products$ = [...this.products$, data];
-      });
+    this.store.dispatch( new AddProduct(result) );
 
     this.showForm = false;
     this.crudForm.reset();
+    this.table.renderRows();
   }
 
   /*
@@ -109,14 +146,7 @@ export class ProductsComponent implements OnInit {
   */
   deleteProduct(id) {
     if (confirm('ARE YOU SURE YOU WANT TO DELETE THIS PRODUCT?')) {
-      this.productsService
-      .deleteProduct(id)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === id);
-        clone.splice(index, 1);
-        this.products$ = clone;
-      });
+      this.store.dispatch( new DeleteProduct(id) );
     } else return;
 
   }
@@ -148,15 +178,7 @@ export class ProductsComponent implements OnInit {
   Returns: 
   */
   editProduct(prod) {
-    this.productsService
-      .updateProduct(prod)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === data.id);
-        clone[index] = data;
-        console.log(clone);
-        this.products$ = clone;
-      });
+    this.store.dispatch( new EditProduct(prod) );
   
     this.showForm = false;
     this.crudForm.reset();

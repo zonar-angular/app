@@ -19,7 +19,7 @@ export class ProductsService {
   Returns: All products
   */
   getProducts() {
-    return this.http.get(`${this.API}/products`);
+    return this.http.get<Product[]>(`${this.API}/products`);
   }
 
   /*
@@ -51,7 +51,7 @@ export class ProductsService {
   Returns: Nothing
   */
   deleteProduct(id) {
-    return this.http.delete(`${this.API}/products/${id}`);
+    return this.http.delete<Product>(`${this.API}/products/${id}`);
   }
 
   /*
