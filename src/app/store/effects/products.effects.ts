@@ -17,7 +17,7 @@ export class ProductsEffects {
   getProducts$: Observable<Action> = this.actions$.pipe(
     ofType<prodActions.GetProducts>(prodActions.ProductActionTypes.GetProducts),
     mergeMap( () => this.prodService.getProducts().pipe(
-      map( products => ( new prodActions.GetProductsSuccess(products) ) )
+      map( products => ( new prodActions.GetProductsSuccess(products) ))
     ))
   );
 

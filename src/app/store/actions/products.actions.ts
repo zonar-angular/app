@@ -27,7 +27,7 @@ export class AddProduct implements Action {
 
 export class AddProductSuccess implements Action {
   readonly type = ProductActionTypes.AddProductSuccess;
-  constructor( public payload: Product ) {}
+  constructor( public payload: Product ) {console.log(payload)}
 }
 
 export class DeleteProduct implements Action {
