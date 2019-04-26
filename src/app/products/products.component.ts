@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { ProductState } from '../store/states/products.state';
 import { AddProduct, GetProducts, DeleteProduct, EditProduct} from '../store/actions/product.actions';
-import { debounceTime } from 'rxjs/operators';
 
 
 @Component({
@@ -22,16 +21,16 @@ export class ProductsComponent implements OnInit {
   //*****************
   // TABLE */
 
-  displayedColumns = ['sku', 'price', 'description', 'edit', 'delete'];
-  dataSource = new MatTableDataSource<Product>();
+  // displayedColumns = ['sku', 'price', 'description', 'edit', 'delete'];
+  // dataSource = new MatTableDataSource<Product>();
 
-  skuFilter: FormControl = new FormControl();
-  priceFilter: FormControl = new FormControl();
-  filterValues: any = { sku: '', price: '' } 
+  // skuFilter: FormControl = new FormControl();
+  // priceFilter: FormControl = new FormControl();
+  // filterValues: any = { sku: '', price: '' } 
 
-  @ViewChild(MatTable) table: MatTable<any>;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatTable) table: MatTable<any>;
+  // @ViewChild(MatSort) sort: MatSort;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
 
   // ***************
 
@@ -58,22 +57,22 @@ export class ProductsComponent implements OnInit {
 
   //******** TABLE ********/
 
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.products.subscribe( prod => this.dataSource.data = prod as Product[] );
+  // ngAfterViewInit() {
+  //   this.dataSource.sort = this.sort;
+  //   this.dataSource.paginator = this.paginator;
+  //   this.products.subscribe( prod => this.dataSource.data = prod as Product[] );
 
-    this.skuFilter.valueChanges.subscribe( val => {
-      this.filterValues['sku'] = val;
-      this.dataSource.filter = JSON.stringify(this.filterValues);
-    });
-    this.priceFilter.valueChanges.subscribe( val => {
-      this.filterValues['price'] = val;
-      this.dataSource.filter = JSON.stringify(this.filterValues);
-    });
+  //   this.skuFilter.valueChanges.subscribe( val => {
+  //     this.filterValues['sku'] = val;
+  //     this.dataSource.filter = JSON.stringify(this.filterValues);
+  //   });
+  //   this.priceFilter.valueChanges.subscribe( val => {
+  //     this.filterValues['price'] = val;
+  //     this.dataSource.filter = JSON.stringify(this.filterValues);
+  //   });
 
-    this.dataSource.filterPredicate = this.createFilter();
-  }
+  //   this.dataSource.filterPredicate = this.createFilter();
+  // }
 
   createFilter() {
     let filterFunction = function(data, filter) : boolean {
@@ -132,7 +131,6 @@ export class ProductsComponent implements OnInit {
 
     this.showForm = false;
     this.crudForm.reset();
-    this.table.renderRows();
   }
 
   /*

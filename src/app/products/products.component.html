@@ -47,7 +47,7 @@
 </div>
 
 <ng-template #allProducts>
-  <mat-form-field>
+  <!-- <mat-form-field>
     <input matInput type='number' [formControl]='skuFilter' placeholder='SKU' />
   </mat-form-field>
   <mat-form-field>
@@ -89,11 +89,11 @@
     <tr mat-row *matRowDef='let row; columns: displayedColumns'></tr>
   </table>
 
-  <mat-paginator [pageSize]='50' [pageSizeOptions]='[2, 50, 100]'></mat-paginator>
+  <mat-paginator [pageSize]='50' [pageSizeOptions]='[2, 50, 100]'></mat-paginator> -->
 
   <!-- <input type='number' [(ngModel)]='skuSearch' />
   <input type='number' [(ngModel)]='priceSearch' />
-  <input type='text' [(ngModel)]='descSearch' />
+  <input type='text' [(ngModel)]='descSearch' /> -->
 
   <mat-accordion class='product-accordion'>
     <mat-expansion-panel *ngFor='let product of products | async | filterlist: skuSearch:priceSearch:descSearch'>
@@ -118,5 +118,5 @@
 
       </mat-action-row>
     </mat-expansion-panel>
-  </mat-accordion> -->
+  </mat-accordion>
 </ng-template>

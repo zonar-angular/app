@@ -47,7 +47,7 @@ export class ProductState {
     return this.prodService.addProduct(payload).pipe(
       tap( result => {
         setState( patch({
-          products: append([payload])
+          products: append([result])
         }));
       })
     );
@@ -75,7 +75,7 @@ export class ProductState {
     return this.prodService.updateProduct(payload).pipe(
       tap( result => {
         setState( patch({
-          products: updateItem<Product>( prod => prod.id === payload.id, payload )
+          products: updateItem<Product>( prod => prod.id === payload.id, result )
         }));
       })
     );
