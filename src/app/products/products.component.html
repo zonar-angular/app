@@ -63,7 +63,7 @@
 
 <ng-template #allProducts>
   <mat-accordion class='product-accordion'>
-    <mat-expansion-panel *ngFor='let product of products$'>
+    <mat-expansion-panel *ngFor='let product of products'>
       <mat-expansion-panel-header>
         SKU: {{ product.sku }}
       </mat-expansion-panel-header>

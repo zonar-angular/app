@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProductsService } from './products.service';
 import { Product } from '../models/product.model';
 import { priceValidator } from '../validators/price.validator';
+import { Observable } from 'rxjs';
+
+import { Store } from '@ngrx/store';
+import { AddProduct, EditProduct, DeleteProduct, GetProducts } from '../store/actions/products.actions';
+import { IAppState } from '../models/app.state';
 
 @Component({
   selector: 'app-products',
@@ -10,17 +14,15 @@ import { priceValidator } from '../validators/price.validator';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
-
-  /*
-  Initial State begins null
-  */
-  products$: Array<Product>;
+  products$: Observable<any>
+  products: Product[];
   crudForm: FormGroup;
   showForm: boolean = false;
 
   constructor(
-    private productsService: ProductsService,
+    private store: Store<IAppState>
   ) {
+    this.products$ = this.store.select('applicationState');
     this.crudForm = this.createFormGroup();
   }
   
@@ -35,16 +37,8 @@ export class ProductsComponent implements OnInit {
   Parameters: Nothing
   */
   ngOnInit() {
-    this.productsService
-      .getProducts()
-      .subscribe( data => {
-        let dataArr = [];
-        for (let obj in data) {
-          dataArr.push(data[obj]);
-        }
-
-        this.products$ = dataArr;
-      });
+    this.store.dispatch( new GetProducts() );
+    this.products$.subscribe( (state: IAppState) => this.products = state.products);
   }
 
   /*
@@ -87,12 +81,7 @@ export class ProductsComponent implements OnInit {
   */
   addProduct(newProduct) {
     const result: Product = Object.assign({}, newProduct);
-
-    this.productsService
-      .addProduct(result)
-      .subscribe(data => {
-        this.products$ = [...this.products$, data];
-      });
+    this.store.dispatch( new AddProduct(result) );
 
     this.showForm = false;
     this.crudForm.reset();
@@ -107,16 +96,9 @@ export class ProductsComponent implements OnInit {
   Parameters: ProductID
   Returns: Nothing
   */
-  deleteProduct(id) {
+  deleteProduct(id: string) {
     if (confirm('ARE YOU SURE YOU WANT TO DELETE THIS PRODUCT?')) {
-      this.productsService
-      .deleteProduct(id)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === id);
-        clone.splice(index, 1);
-        this.products$ = clone;
-      });
+      this.store.dispatch( new DeleteProduct(id) );
     } else return;
 
   }
@@ -147,16 +129,8 @@ export class ProductsComponent implements OnInit {
   Parameters: 
   Returns: 
   */
-  editProduct(prod) {
-    this.productsService
-      .updateProduct(prod)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === data.id);
-        clone[index] = data;
-        console.log(clone);
-        this.products$ = clone;
-      });
+  editProduct(prod: Product) {
+    this.store.dispatch( new EditProduct(prod) );
   
     this.showForm = false;
     this.crudForm.reset();
