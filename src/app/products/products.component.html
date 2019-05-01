@@ -1,5 +1,6 @@
 <h2>Products</h2>
 
+
 <button 
   class='top-button'
   mat-raised-button (click)='showForm = true; crudForm.reset()'>
@@ -61,9 +62,10 @@
   </form>
 </div>
 
+
 <ng-template #allProducts>
-  <mat-accordion class='product-accordion'>
-    <mat-expansion-panel *ngFor='let product of products$'>
+  <mat-accordion *ngIf="products$" class='product-accordion'>
+    <mat-expansion-panel *ngFor="let product of products$ | async">
       <mat-expansion-panel-header>
         SKU: {{ product.sku }}
       </mat-expansion-panel-header>

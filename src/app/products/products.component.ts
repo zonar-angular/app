@@ -1,26 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProductsService } from './products.service';
+import { ProductService } from './state/products.services';
+import { ProductQuery } from './state/products.query';
 import { Product } from '../models/product.model';
 import { priceValidator } from '../validators/price.validator';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.css']
+  styleUrls: ['./products.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsComponent implements OnInit {
 
-  /*
-  Initial State begins null
-  */
-  products$: Array<Product>;
+  products$: Observable<Product[]>;
   crudForm: FormGroup;
   showForm: boolean = false;
 
-  constructor(
-    private productsService: ProductsService,
-  ) {
+  constructor( private productQuery: ProductQuery, private productService: ProductService ) {
     this.crudForm = this.createFormGroup();
   }
   
@@ -29,22 +27,24 @@ export class ProductsComponent implements OnInit {
 
   When component initializes either on refresh or path change
   subscribes to data returned from service. Converts returned
-  opbject to array for Angular parsing. Updates state products$
+  object to array for Angular parsing. Updates state products$
   with data.
 
   Parameters: Nothing
   */
   ngOnInit() {
-    this.productsService
-      .getProducts()
-      .subscribe( data => {
-        let dataArr = [];
-        for (let obj in data) {
-          dataArr.push(data[obj]);
-        }
+    this.products$ = this.productService.getProducts();
+    console.log(this.productQuery.selectAll());
+    // this.productsService
+    //   .getProducts()
+    //   .subscribe( data => {
+    //     let dataArr = [];
+    //     for (let obj in data) {
+    //       dataArr.push(data[obj]);
+    //     }
 
-        this.products$ = dataArr;
-      });
+    //     this.products$ = dataArr;
+    //   });
   }
 
   /*
@@ -88,11 +88,11 @@ export class ProductsComponent implements OnInit {
   addProduct(newProduct) {
     const result: Product = Object.assign({}, newProduct);
 
-    this.productsService
-      .addProduct(result)
-      .subscribe(data => {
-        this.products$ = [...this.products$, data];
-      });
+    // this.productsService
+    //   .addProduct(result)
+    //   .subscribe(data => {
+    //     this.products$ = [...this.products$, data];
+    //   });
 
     this.showForm = false;
     this.crudForm.reset();
@@ -109,14 +109,14 @@ export class ProductsComponent implements OnInit {
   */
   deleteProduct(id) {
     if (confirm('ARE YOU SURE YOU WANT TO DELETE THIS PRODUCT?')) {
-      this.productsService
-      .deleteProduct(id)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === id);
-        clone.splice(index, 1);
-        this.products$ = clone;
-      });
+      // this.productsService
+      // .deleteProduct(id)
+      // .subscribe( data => {
+      //   let clone = [...this.products$];
+      //   const index = clone.findIndex( prod => prod.id === id);
+      //   clone.splice(index, 1);
+      //   this.products$ = clone;
+      // });
     } else return;
 
   }
@@ -148,15 +148,15 @@ export class ProductsComponent implements OnInit {
   Returns: 
   */
   editProduct(prod) {
-    this.productsService
-      .updateProduct(prod)
-      .subscribe( data => {
-        let clone = [...this.products$];
-        const index = clone.findIndex( prod => prod.id === data.id);
-        clone[index] = data;
-        console.log(clone);
-        this.products$ = clone;
-      });
+    // this.productsService
+    //   .updateProduct(prod)
+    //   .subscribe( data => {
+    //     let clone = [...this.products$];
+    //     const index = clone.findIndex( prod => prod.id === data.id);
+    //     clone[index] = data;
+    //     console.log(clone);
+    //     this.products$ = clone;
+    //   });
   
     this.showForm = false;
     this.crudForm.reset();

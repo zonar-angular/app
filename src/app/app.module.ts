@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { ProductsComponent } from './products/products.component';
 import { ProductsService } from './products/products.service';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
     ReactiveFormsModule,
     MaterialModule,
     BrowserAnimationsModule,
+    AkitaNgDevtools.forRoot()
   ],
   providers: [ProductsService],
   bootstrap: [AppComponent]
