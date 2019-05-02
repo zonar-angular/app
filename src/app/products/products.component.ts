@@ -34,7 +34,6 @@ export class ProductsComponent implements OnInit {
   */
   ngOnInit() {
     this.products$ = this.productService.getProducts();
-    console.log(this.productQuery.selectAll());
     // this.productsService
     //   .getProducts()
     //   .subscribe( data => {
@@ -87,6 +86,7 @@ export class ProductsComponent implements OnInit {
   */
   addProduct(newProduct) {
     const result: Product = Object.assign({}, newProduct);
+    this.productService.addProduct(result);
 
     // this.productsService
     //   .addProduct(result)
@@ -109,6 +109,7 @@ export class ProductsComponent implements OnInit {
   */
   deleteProduct(id) {
     if (confirm('ARE YOU SURE YOU WANT TO DELETE THIS PRODUCT?')) {
+      this.productService.deleteProduct(id);
       // this.productsService
       // .deleteProduct(id)
       // .subscribe( data => {

@@ -31,9 +31,11 @@ export class ProductsService {
   Returns: New Product
   */
   addProduct(product) {
+    console.log('in the http service');
     const sku = product.sku, 
           description = product.description, 
           price = product.price;
+    console.log(sku, description, price);
     
     return this.http.post<Product>(`${this.API}/products`, {
       sku,

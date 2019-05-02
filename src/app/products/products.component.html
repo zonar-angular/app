@@ -65,13 +65,13 @@
 
 <ng-template #allProducts>
   <mat-accordion *ngIf="products$" class='product-accordion'>
-    <mat-expansion-panel *ngFor="let product of products$ | async">
+    <mat-expansion-panel *ngFor="let product of products$ | async | keyvalue">
       <mat-expansion-panel-header>
-        SKU: {{ product.sku }}
+        SKU: {{ product.value.sku }}
       </mat-expansion-panel-header>
 
-      <p>${{ product.price }}</p>
-      <p>{{ product.description }}</p>
+      <p>${{ product.value.price }}</p>
+      <p>{{ product.value.description }}</p>
 
       <mat-action-row class='actions'>
         <button
@@ -82,7 +82,7 @@
 
         <button 
           mat-raised-button class='warn' 
-          (click)='deleteProduct(product.id)'
+          (click)='deleteProduct(product.value.id)'
         >Delete</button>
 
       </mat-action-row>
